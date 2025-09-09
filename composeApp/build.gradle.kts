@@ -49,6 +49,13 @@ android {
     namespace = "io.github.numq"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
+    applicationVariants.all {
+        outputs.filterIsInstance<com.android.build.gradle.internal.api.ApkVariantOutputImpl>().forEach { output ->
+            val fileName = "camera-capture-$versionName.apk"
+
+            output.outputFileName = fileName
+        }
+    }
     defaultConfig {
         applicationId = "io.github.numq"
         minSdk = libs.versions.android.minSdk.get().toInt()
