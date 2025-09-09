@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowLeft
+import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -207,56 +209,52 @@ fun InteractionView(feature: InteractionFeature, onError: (Exception) -> Unit) {
     }
 
     if (state.isDialogVisible) {
+        val (dialogPort, setDialogPort) = remember(state.port) { mutableIntStateOf(state.port) }
+
         Dialog(onDismissRequest = {
             coroutineScope.launch {
-                feature.execute(InteractionCommand.Dialog.Cancel)
+                coroutineScope.launch {
+                    feature.execute(InteractionCommand.Dialog.Close(port = dialogPort))
+                }
             }
         }) {
-            val (host, setHost) = remember { mutableStateOf(state.host) }
-
-            val (port, setPort) = remember { mutableIntStateOf(state.port) }
-
             Card {
                 Column(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(space = 8.dp, alignment = Alignment.CenterVertically)
                 ) {
-                    OutlinedTextField(
-                        value = host,
-                        onValueChange = setHost,
-                        modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                        label = {
-                            Text("Host", style = MaterialTheme.typography.bodyMedium)
-                        },
-                        placeholder = {
-                            Text("0.0.0.0", style = MaterialTheme.typography.bodySmall)
-                        },
-                        textStyle = MaterialTheme.typography.bodyMedium
-                    )
-                    OutlinedTextField(
-                        value = "$port",
-                        onValueChange = { value ->
-                            value.filter { it in '0'..'9' }.toIntOrNull()?.let(setPort)
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                        label = {
-                            Text("Port", style = MaterialTheme.typography.bodyMedium)
-                        },
-                        placeholder = {
-                            Text("8090", style = MaterialTheme.typography.bodySmall)
-                        },
-                        textStyle = MaterialTheme.typography.bodyMedium
-                    )
-                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-                        IconButton(onClick = {
-                            coroutineScope.launch {
-                                feature.execute(InteractionCommand.Dialog.Done(host = host, port = port))
+                    Text("Change port", textAlign = TextAlign.Center, style = MaterialTheme.typography.bodyMedium)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(
+                            space = 8.dp, alignment = Alignment.CenterHorizontally
+                        ), verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                            IconButton(onClick = {
+                                setDialogPort((dialogPort - 1).coerceAtLeast(0))
+                            }, enabled = dialogPort > 0) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowLeft, null)
                             }
-                        }) {
-                            Icon(Icons.Default.Done, null)
+                        }
+                        OutlinedTextField(
+                            value = "$dialogPort",
+                            onValueChange = { value ->
+                                value.filter { it in '0'..'9' }.toIntOrNull()?.let(setDialogPort)
+                            },
+                            modifier = Modifier.fillMaxWidth(.5f),
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                            placeholder = {
+                                Text("8090", style = MaterialTheme.typography.bodySmall)
+                            },
+                            textStyle = MaterialTheme.typography.bodyMedium
+                        )
+                        Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                            IconButton(onClick = {
+                                setDialogPort((dialogPort + 1).coerceAtMost(65535))
+                            }, enabled = dialogPort < 65535) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowRight, null)
+                            }
                         }
                     }
                 }

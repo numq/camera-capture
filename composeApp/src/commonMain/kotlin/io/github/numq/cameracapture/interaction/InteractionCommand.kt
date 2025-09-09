@@ -19,9 +19,7 @@ sealed interface InteractionCommand {
     sealed interface Dialog : InteractionCommand {
         data object Open : Dialog
 
-        data object Cancel : Dialog
-
-        data class Done(val host: String, val port: Int) : Dialog
+        data class Close(val port: Int) : Dialog
     }
 
     sealed interface Server : InteractionCommand {

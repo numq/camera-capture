@@ -44,7 +44,7 @@ private val interaction = module {
 
     single { ServerInteractionReducer(getServerState = get(), startServer = get(), stopServer = get()) }
 
-    single { DialogInteractionReducer(changeHost = get(), changePort = get()) }
+    single { DialogInteractionReducer(changePort = get()) }
 
     single {
         InteractionReducer(
