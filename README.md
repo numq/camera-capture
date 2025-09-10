@@ -18,6 +18,8 @@ and
 <a href="https://github.com/numq/camera-capture">mobile application 📍</a>
 </p>
 
+<div align="center"><img src="media/preview.png" alt="preview"/></div>
+
 ## 📖 Table of Content
 
 * [📱 Supported platforms](#-supported-platforms)
