@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.remember
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
@@ -18,6 +19,7 @@ import io.github.numq.cameracapture.permission.RequestPermission
 import io.github.numq.cameracapture.server.StartServer
 import io.github.numq.cameracapture.server.StopServer
 import io.github.numq.cameracapture.settings.GetSettings
+import io.github.numq.cameracapture.theme.ApplicationTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
@@ -66,10 +68,12 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
             when {
                 hasPermissions || multiplePermissionsState.allPermissionsGranted -> Application()
 
-                else -> RequestPermission(
-                    multiplePermissionsState = multiplePermissionsState, onRequestPermission = {
-                        multiplePermissionsState.launchMultiplePermissionRequest()
-                    })
+                else -> ApplicationTheme(isDarkTheme = isSystemInDarkTheme()) {
+                    RequestPermission(
+                        multiplePermissionsState = multiplePermissionsState, onRequestPermission = {
+                            multiplePermissionsState.launchMultiplePermissionRequest()
+                        })
+                }
             }
         }
     }
