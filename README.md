@@ -20,6 +20,10 @@ and
 
 <div align="center"><img src="media/preview.png" alt="preview"/></div>
 
+> [!NOTE]
+> The application was designed using the [Reduce & Conquer](https://github.com/numq/reduce-and-conquer) architectural
+> pattern
+
 ## 📖 Table of Content
 
 * [📱 Supported platforms](#-supported-platforms)
